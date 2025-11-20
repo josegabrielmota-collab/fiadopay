@@ -6,6 +6,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @OpenAPIDefinition(
     info = @Info(title = "FiadoPay Simulator API", version = "v1"),
@@ -18,4 +22,10 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
     bearerFormat = "FAKE",
     in = SecuritySchemeIn.HEADER
 )
-public class OpenApiConfig { }
+@Configuration
+public class OpenApiConfig {
+	@Bean(name = "threadPool")
+	public ExecutorService threadPool() {
+		return Executors.newFixedThreadPool(10);
+	}
+}
