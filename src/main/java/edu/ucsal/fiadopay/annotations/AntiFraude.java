@@ -1,4 +1,4 @@
-package annotations;
+package edu.ucsal.fiadopay.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
