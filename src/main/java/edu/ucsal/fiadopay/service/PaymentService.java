@@ -1,6 +1,7 @@
 package edu.ucsal.fiadopay.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.ucsal.fiadopay.annotations.AntiFraude;
 import edu.ucsal.fiadopay.controller.PaymentRequest;
 import edu.ucsal.fiadopay.controller.PaymentResponse;
 import edu.ucsal.fiadopay.domain.Merchant;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
@@ -35,17 +37,19 @@ public class PaymentService {
   private final WebhookDeliveryRepository deliveries;
   private final ObjectMapper objectMapper;
   private final ExecutorService executor;
+  private final FraudAnalysisService fraudService;
 
   @Value("${fiadopay.webhook-secret}") String secret;
   @Value("${fiadopay.processing-delay-ms}") long delay;
   @Value("${fiadopay.failure-rate}") double failRate;
 
-  public PaymentService(MerchantRepository merchants, PaymentRepository payments, WebhookDeliveryRepository deliveries, ObjectMapper objectMapper, ExecutorService executor) {
+  public PaymentService(MerchantRepository merchants, PaymentRepository payments, WebhookDeliveryRepository deliveries, ObjectMapper objectMapper, ExecutorService executor, FraudAnalysisService fraudService) {
     this.merchants = merchants;
     this.payments = payments;
     this.deliveries = deliveries;
     this.objectMapper = objectMapper;
     this.executor=executor;
+    this.fraudService = fraudService;
   }
 
   private Merchant merchantFromAuth(String auth){
@@ -67,7 +71,25 @@ public class PaymentService {
   }
 
   @Transactional
+  @AntiFraude(threshold = 2000.00)
   public PaymentResponse createPayment(String auth, String idemKey, PaymentRequest req){
+	  
+	  try {
+	        Method method = this.getClass().getMethod("createPayment", String.class, String.class, PaymentRequest.class);
+	        
+	        if (method.isAnnotationPresent(AntiFraude.class)) {
+	            AntiFraude annotation = method.getAnnotation(AntiFraude.class);
+	            double limit = annotation.threshold();
+	            
+	            if (fraudService.isFraud(req.amount(), limit)) {
+	                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+	                    "Transação recusada: Suspeita de Fraude (Valor acima de " + limit + ")");
+	            }
+	        }
+	    } catch (NoSuchMethodException e) {
+	        e.printStackTrace();
+	    }
+	  
     var merchant = merchantFromAuth(auth);
     var mid = merchant.getId();
 
