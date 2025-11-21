@@ -19,7 +19,7 @@ Escolhido a opção 1 do trabalho, envolvendo a refatoração do backend de Fiad
 - Tem como alvo **Metodos** e define que uma operação financeira precisa de validação.
 - **Metadados**
 	- `threshold` : Valor limite para ativação da regra.
-		- `name` : Identificador da regra.	
+	- `name` : Identificador da regra.	
 		
 ### `@PaymentMethod`
 -  Tem como alvo **Classes**, com o objetivo de classificar implementações de meio de pagamento
@@ -28,8 +28,13 @@ Escolhido a opção 1 do trabalho, envolvendo a refatoração do backend de Fiad
 	
 ## Evidencias
 ### Evidencia 1 - Inicialização
+<img width="1279" height="509" alt="EvidenciaA" src="https://github.com/user-attachments/assets/51f6ea2f-6c8e-424c-8447-69f71025a6b6" />
+
 ### Evidencia 2 - Sucesso
+<img width="1165" height="533" alt="EvidenciaB" src="https://github.com/user-attachments/assets/c9b00637-17e6-4925-a2b1-589a0ff85300" />
 Pagamento de R$ 100,00 (Status 201)
+
 ### Evidencia 3 - Fraude
-Pagamento de R$ 5.000,00 (Status 400) bloqueado pela anotação @AntiFraud(threshold=2000)
+<img width="1173" height="624" alt="EvidenciaC" src="https://github.com/user-attachments/assets/779e5b5b-d13d-4a07-b96a-f876901e554a" />
+Pagamento de R$ 5.000,00 (Status 400) bloqueado pela anotação @AntiFraude(threshold=2000)
 
