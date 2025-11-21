@@ -25,7 +25,21 @@ Escolhido a opção 1 do trabalho, envolvendo a refatoração do backend de Fiad
 -  Tem como alvo **Classes**, com o objetivo de classificar implementações de meio de pagamento
 - **Metadados**
 	- `type`: Define o tipo
-	
+## Comandos para testar
+### Inicializar
+`./mvnw spring-boot:run`
+ou
+`mvnw.cmd spring-boot:run`
+
+### Criação
+`curl -X POST http://localhost:8080/fiadopay/admin/merchants -H "Content-Type: application/json" -d "{\"name\":\"teste\",\"webhookUrl\":\"http://localhost:8081\"}"`
+
+### Teste de Pagamento Valido
+`curl -X POST http://localhost:8080/fiadopay/gateway/payments -H "Authorization: Bearer FAKE-1" -H "Content-Type: application/json" -d "{\"amount\":100.00,\"currency\":\"BRL\",\"method\":\"PIX\"}"`
+
+### Teste de Pagamento Invalido
+`curl -X POST http://localhost:8080/fiadopay/gateway/payments -H "Authorization: Bearer FAKE-1" -H "Content-Type: application/json" -d "{\"amount\":5000.00,\"currency\":\"BRL\",\"method\":\"PIX\"}"`
+
 ## Evidencias
 ### Evidencia 1 - Inicialização
 <img width="1279" height="509" alt="EvidenciaA" src="https://github.com/user-attachments/assets/51f6ea2f-6c8e-424c-8447-69f71025a6b6" />
